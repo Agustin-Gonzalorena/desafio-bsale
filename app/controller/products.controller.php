@@ -9,6 +9,11 @@ class productsController{
     function __construct(){
         $this->model=new productsModel();
         $this->view=new apiView();
+        $this->data = file_get_contents("php://input");// lee el body del request
+    }
+    
+    private function getData() {
+        return json_decode($this->data);
     }
 
     function getAll($params=null){
@@ -23,7 +28,7 @@ class productsController{
                 $products=$this->model->filterByCategory($category);
                 if(empty($products)){
                     $this->view->response("La categoria con el id=($category) no exite.",404);
-                    die();
+                    exit();
                 }
                 $this->view->response($products);
             }
@@ -57,9 +62,23 @@ class productsController{
         $product=$this->model->getById($id);
         if(empty($product)){
             $this->view->response("El producto con el id=($id) no exite.",404);
-            die();
+            exit();
         }
         $this->view->response($product);
+    }
+
+    function search(){
+        $data=$this->getData();
+        if($data==null){
+            $this->view->response("No se enviaron correctamente los datos",400);
+            exit();
+        }
+        $results=$this->model->getResults($data->search);
+        if(empty($results)){
+            $this->view->response("No se encontraron resultados para($data->search)",404);
+            exit();
+        }
+        $this->view->response($results);
     }
 
     private function checkParamColumn($column){

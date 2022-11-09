@@ -53,4 +53,10 @@ class productsModel{
         $quantity=$query->rowCount();
         return $quantity;
     }
+    function getResults($search){
+        $query = $this->db->prepare("SELECT * FROM product WHERE `name` LIKE ? ");
+        $query->execute(['%' . $search . '%']);
+        $products=$query->fetchAll(PDO::FETCH_OBJ);
+        return $products;
+    }
 }
