@@ -21,6 +21,10 @@ class productsController{
             }else{
                 $category=$_GET['filter'];
                 $products=$this->model->filterByCategory($category);
+                if(empty($products)){
+                    $this->view->response("La categoria con el id=($category) no exite.",404);
+                    die();
+                }
                 $this->view->response($products);
             }
         }elseif(count($_GET)==3){
@@ -51,6 +55,10 @@ class productsController{
     function getById($params=null){
         $id=$params[':ID'];
         $product=$this->model->getById($id);
+        if(empty($product)){
+            $this->view->response("El producto con el id=($id) no exite.",404);
+            die();
+        }
         $this->view->response($product);
     }
 
