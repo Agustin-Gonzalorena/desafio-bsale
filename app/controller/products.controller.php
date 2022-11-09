@@ -9,11 +9,6 @@ class productsController{
     function __construct(){
         $this->model=new productsModel();
         $this->view=new apiView();
-        $this->data = file_get_contents("php://input");// lee el body del request
-    }
-    
-    private function getData() {
-        return json_decode($this->data);
     }
 
     function getAll($params=null){
@@ -21,17 +16,24 @@ class productsController{
             $products=$this->model->getAll();
             $this->view->response($products);
         }elseif(count($_GET)==2){
-            if(empty($_GET['filter'])){
-                $this->view->response("Parametro GET incorrecto",400);
-            }else{
-                $category=$_GET['filter'];
-                $products=$this->model->filterByCategory($category);
-                if(empty($products)){
-                    $this->view->response("La categoria con el id=($category) no exite.",404);
-                    exit();
+            if(isset($_GET['filter'])){
+                if(empty($_GET['filter'])){
+                    $this->view->response("Parametro GET incorrecto",400);
+                }else{
+                    $category=$_GET['filter'];
+                    $products=$this->model->filterByCategory($category);
+                    if(empty($products)){
+                        $this->view->response("La categoria con el id=($category) no exite.",404);
+                        exit();
+                    }
+                    $this->view->response($products);
                 }
-                $this->view->response($products);
+            }elseif(isset($_GET['search'])){
+                $this->search($_GET['search']);
+            }else{
+                $this->view->response("Parametro GET desconocido", 400);
             }
+            
         }elseif(count($_GET)==3){
             if(isset($_GET['column']) && isset($_GET['order'])){
                 if(empty($_GET["column"]) || empty($_GET["order"])){
@@ -67,15 +69,14 @@ class productsController{
         $this->view->response($product);
     }
 
-    function search(){
-        $data=$this->getData();
-        if($data==null){
+    private function search($search){
+        if($search==null){
             $this->view->response("No se enviaron correctamente los datos",400);
             exit();
         }
-        $results=$this->model->getResults($data->search);
+        $results=$this->model->getResults($search);
         if(empty($results)){
-            $this->view->response("No se encontraron resultados para($data->search)",404);
+            $this->view->response("No se encontraron resultados para($search)",404);
             exit();
         }
         $this->view->response($results);

@@ -7,7 +7,6 @@ $router = new Router();
 
 $router->addRoute('products', 'GET', 'productsController', 'getAll');
 $router->addRoute('products/:ID','GET','productsController','getById');
-$router->addRoute('products', 'POST', 'productsController', 'search');
 
 $router->addRoute('categories','GET','categoriesController','getAll');
 
