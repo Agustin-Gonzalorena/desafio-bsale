@@ -16,14 +16,27 @@ class productsController{
             $products=$this->model->getAll();
             $this->view->response($products);
         }elseif(count($_GET)==2){
-            if(isset($_GET['search'])){
+            if(isset($_GET['filter'])){
+                if(empty($_GET['filter'])){
+                    $this->view->response("Parametro GET incorrecto",400);
+                }else{
+                    $category=$_GET['filter'];
+                    $products=$this->model->filterByCategory($category);
+                    if(empty($products)){
+                        $this->view->response("La categoria con el id=($category) no exite.",404);
+                        exit();
+                    }
+                    $this->view->response($products);
+                }
+            }elseif(isset($_GET['search'])){
                 $this->search($_GET['search']);
             }else{
                 $this->view->response("Parametro GET desconocido", 400);
             }
         }else{
             $this->view->response("Parametro GET desconocido", 400);
-        }     
+        }
+            
     }
     
     function getById($params=null){

@@ -26,6 +26,14 @@ class productsModel{
         return $product;
     }
     
+    function filterByCategory($category){
+        $query = $this->db->prepare("SELECT * FROM product WHERE category=?");
+        $query->execute([$category]);
+        $products = $query->fetchAll(PDO::FETCH_OBJ);
+        return $products;
+    }
+
+    
     function getResults($search){
         $query = $this->db->prepare("SELECT product.*, category.name as category FROM product JOIN category ON product.category = category.id WHERE `product`.`name` LIKE ? OR `category`.`name` LIKE ? ");
         $query->execute(['%' . $search . '%','%' . $search . '%']);
