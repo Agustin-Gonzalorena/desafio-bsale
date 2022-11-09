@@ -54,8 +54,8 @@ class productsModel{
         return $quantity;
     }
     function getResults($search){
-        $query = $this->db->prepare("SELECT * FROM product WHERE `name` LIKE ? ");
-        $query->execute(['%' . $search . '%']);
+        $query = $this->db->prepare("SELECT product.*, category.name as category FROM product JOIN category ON product.category = category.id WHERE `product`.`name` LIKE ? OR `category`.`name` LIKE ? ");
+        $query->execute(['%' . $search . '%','%' . $search . '%']);
         $products=$query->fetchAll(PDO::FETCH_OBJ);
         return $products;
     }
