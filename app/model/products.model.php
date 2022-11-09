@@ -26,33 +26,6 @@ class productsModel{
         return $product;
     }
     
-    function filterByCategory($category){
-        $query = $this->db->prepare("SELECT * FROM product WHERE category=?");
-        $query->execute([$category]);
-        $products = $query->fetchAll(PDO::FETCH_OBJ);
-        return $products;
-    }
-
-    function orderByColumn($column,$order){
-        $query = $this->db->prepare("SELECT * FROM `product` ORDER BY `product`.`$column` $order");
-        $query->execute();
-        $products = $query->fetchAll(PDO::FETCH_OBJ);
-        return $products;
-    }
-
-    function getAllPaginate($start,$cantPages){
-        $query = $this->db->prepare("SELECT * FROM product LIMIT $start,$cantPages");
-        $query->execute();
-        $products = $query->fetchAll(PDO::FETCH_OBJ);
-        return $products;
-    }
-
-    function quantityProducts(){
-        $query = $this->db->prepare("SELECT * FROM product");
-        $query->execute();
-        $quantity=$query->rowCount();
-        return $quantity;
-    }
     function getResults($search){
         $query = $this->db->prepare("SELECT product.*, category.name as category FROM product JOIN category ON product.category = category.id WHERE `product`.`name` LIKE ? OR `category`.`name` LIKE ? ");
         $query->execute(['%' . $search . '%','%' . $search . '%']);
